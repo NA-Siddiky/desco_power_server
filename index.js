@@ -82,9 +82,9 @@ client.connect((err) => {
     app.get("/delete-billing/:id", async (req, res) => {
         const id = new ObjectId(req.params.id);
         console.log(id);
-        const deleteService = await servicesCollection.deleteOne({ _id: id });
-        console.log(deleteService);
-        if (deleteService.deletedCount > 0) {
+        const deleteBill = await billCollection.deleteOne({ _id: id });
+        console.log(deleteBill);
+        if (deleteBill.deletedCount > 0) {
             res.send({ message: "Delete Successfully" });
         }
     });
