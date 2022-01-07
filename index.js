@@ -31,6 +31,25 @@ client.connect(err => {
     const adminsCollection = client.db("tech-soldiers").collection("admin");
 
 
+
+
+    app.get("/getReviews", (req, res) => {
+        reviewsCollection.find({}).toArray((err, documents) => {
+            res.send(documents);
+        });
+    });
+
+    app.post("/addReviews", (req, res) => {
+        const field = req.body;
+        reviewsCollection.insertMany(field).then(result => {
+            res.send(result);
+            console.log(result.insertedCount);
+        });
+    });
+
+
+
+
 });
 
 app.listen(port, () => {
