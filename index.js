@@ -29,6 +29,7 @@ client.connect((err) => {
 
     // admin
     const billCollection = client.db("desco").collection("bill");
+    const usersCollection = client.db("desco").collection("user");
 
     app.post("/add-billing", (req, res) => {
         const addBill = req.body;
@@ -43,11 +44,51 @@ client.connect((err) => {
         const { limit } = req.params;
         billCollection
             .find()
-            .limit(limit)
+            .limit(parseInt(limit))
             .toArray((err, items) => {
                 res.send([...items]);
             });
     });
+
+    app.post("/addUser", async (req, res) => {
+        const user = req.body;
+        const { email } = user;
+        usersCollection.findOne({ email }, (err, data) => {
+            if (email) {
+                res.send.json({ msg: "user Already exist" });
+            } else {
+                usersCollection.insertOne(user).then((result) => {
+                    if (result.insertedCount > 0) {
+                        res.send(result.ops[0]);
+                    }
+                });
+            }
+        });
+    });
+
+
+    app.post('/orderStatus/:id', async (req, res) => {
+        try {
+            const id = new ObjectId(req.params.id);
+            const { status } = req.body
+            console.log(status)
+            await orderCollection.updateOne({ _id: id }, { $set: { "status": status } });
+            res.send({ message: 'Update Successfully ' });
+        } catch (err) {
+            res.send(err)
+        }
+    });
+
+
+    app.get('/deleteService/:id', async (req, res) => {
+        const id = new ObjectId(req.params.id);
+        console.log(id)
+        const deleteService = await servicesCollection.deleteOne({ _id: id });
+        console.log(deleteService)
+        if (deleteService.deletedCount > 0) {
+            res.send({ message: 'Delete Successfully' })
+        }
+    })
 });
 
 app.listen(port, () => {
