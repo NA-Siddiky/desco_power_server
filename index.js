@@ -66,29 +66,28 @@ client.connect((err) => {
         });
     });
 
-
-    app.post('/orderStatus/:id', async (req, res) => {
+    app.post("/update-bill/:id", async (req, res) => {
         try {
             const id = new ObjectId(req.params.id);
-            const { status } = req.body
-            console.log(status)
-            await orderCollection.updateOne({ _id: id }, { $set: { "status": status } });
-            res.send({ message: 'Update Successfully ' });
+            const status = req.body;
+            console.log(status);
+            await billCollection.updateOne({ _id: id }, { $set: status });
+            res.send({ message: "Update Successfully " });
         } catch (err) {
-            res.send(err)
+            res.send(err);
         }
     });
 
 
-    app.get('/deleteService/:id', async (req, res) => {
+    app.get("/delete-billing/:id", async (req, res) => {
         const id = new ObjectId(req.params.id);
-        console.log(id)
+        console.log(id);
         const deleteService = await servicesCollection.deleteOne({ _id: id });
-        console.log(deleteService)
+        console.log(deleteService);
         if (deleteService.deletedCount > 0) {
-            res.send({ message: 'Delete Successfully' })
+            res.send({ message: "Delete Successfully" });
         }
-    })
+    });
 });
 
 app.listen(port, () => {
